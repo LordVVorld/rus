@@ -11,43 +11,37 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 
 @DelicateCoroutinesApi
 class MainActivity : AppCompatActivity() {
-    private val longClickListener: (Weather) -> Unit = { item ->
-        onLongClick(item)
-    }
-    private val weatherAdapter = Adapter(longClickListener)
-    private val context = this
+    private val longClick: (Weather) -> Unit = { item -> onLongClick(item) }
+    private val adapter = Adapter(longClick)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        val recyclerView: RecyclerView = findViewById(R.id.rView)
 
-        val viewModel: MyViewModel by viewModels()
-        viewModel.apply {
-            getRequestResult().observe(context) {
-                Snackbar.make(findViewById(R.id.rView), it.toString(), Snackbar.LENGTH_LONG)
-                    .show()
-            }
-            getWeatherData().observe(context) {
-                weatherAdapter.submitList(it)
-            }
+        val viewModel: WeatherViewModel by viewModels()
+        viewModel.getRequestResult().observe(this) {
+            val snackBar = Snackbar.make(recyclerView, it.toString(), Snackbar.LENGTH_LONG)
+            snackBar.show()
+        }
+        viewModel.getWeatherData().observe(this) {
+            adapter.submitList(it)
         }
 
-        findViewById<RecyclerView>(R.id.rView).apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = weatherAdapter
-        }
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = adapter
 
     }
 
     private fun onLongClick(listItem: Weather) {
-        val weather: String =
+        val dataString: String =
             "City: ${getString(R.string.City)} \n" +
                     "Date: ${listItem.dt_txt} \n" +
                     "Temperature: ${listItem.temp}"
 
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, weather)
+            putExtra(Intent.EXTRA_TEXT, dataString)
             type = "text/*"
         }
         startActivity(Intent.createChooser(sendIntent, null))

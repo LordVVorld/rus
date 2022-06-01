@@ -3,7 +3,7 @@ package com.example.snackbar
 import android.app.Application
 import androidx.room.Room
 
-class AppWithCompanion : Application() {
+class AccompaniedApplication : Application() {
     companion object {
         lateinit var db: DataBase
         lateinit var api: RetrofitServices

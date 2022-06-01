@@ -8,8 +8,5 @@ interface DAO {
     suspend fun getAll(): List<Weather>
 
     @Insert
-    suspend fun insertAll(vararg weather: Weather)
-
-    @Query("DELETE FROM Weather")
-    suspend fun deleteAll()
+    suspend fun insert(vararg weather: Weather)
 }
