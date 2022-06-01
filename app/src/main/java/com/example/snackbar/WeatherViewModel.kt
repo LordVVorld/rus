@@ -25,7 +25,7 @@ class WeatherViewModel : ViewModel() {
             val response = api.getWeatherList()
             if (response.isSuccessful) {
                 val listOfWeather = response.body()!!.toListOfWeather()
-                dbComparison(listOfWeather, db.weatherDao().getAll())
+                //dbComparison(listOfWeather, db.weatherDao().getAll())
 
                 weatherData.postValue(listOfWeather)
                 requestResult.postValue("Request successful.")
